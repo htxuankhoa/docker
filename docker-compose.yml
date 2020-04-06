@@ -1,0 +1,83 @@
+version: '3'
+
+networks:
+  backend:
+    driver: bridge
+
+services:
+  mysql:
+    image: mysql:${MYSQL_VERSION}
+    container_name: ${MYSQL_CONTAINER_NAME}
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - TZ=${WORKSPACE_TIMEZONE}
+    volumes:
+      - ${HOST_MYSQL_DATA_PATH}:/var/lib/mysql
+      - ${HOST_MYSQL_CNF_FILE_PATH}:/etc/mysql/conf.d/my.cnf
+    ports:
+      - ${MYSQL_HOST_PORT}:3306
+    networks:
+      - backend
+
+  php-fpm:
+    build:
+      context: ./php
+      args:
+        - PHP_VERSION=${PHP_VERSION}
+        - TZ=${WORKSPACE_TIMEZONE}
+    image: htxuankhoa/phpfpm:latest
+    container_name: ${PHPFPM_CONTAINER_NAME}
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - ./php/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
+      - ./php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+      - ./php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+      - ${APPLICATIONS}:/var/www
+    extra_hosts:
+      - "dockerhost:${DOCKER_HOST_IP}"
+    networks:
+      - backend
+
+  apache2:
+    build:
+      context: ./apache2
+      args:
+        - UBUNTU_VERSION=${UBUNTU_VERSION}
+    image: htxuankhoa/apache2:latest
+    container_name: ${APACHE_CONTAINER_NAME}
+    restart: unless-stopped
+    volumes:
+      - ${APPLICATIONS}:/var/www
+      - ${HOST_APACHE2_LOGS_PATH}:/var/log/apache2
+      - ./apache2/sites:/etc/apache2/sites-available
+    ports:
+      - ${APACHE_HTTP_HOST_PORT}:80
+      - ${APACHE_HTTPS_HOST_PORT}:443
+    depends_on:
+      - php-fpm
+    networks:
+      - backend
+
+  workspace:
+    build:
+      context: .
+      args:
+        - UBUNTU_VERSION=${UBUNTU_VERSION}
+        - TZ=${WORKSPACE_TIMEZONE}
+    image: htxuankhoa/workspace:latest
+    container_name: ${WORKSPACE_CONTAINER_NAME}
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - ${APPLICATIONS}:/var/www
+    extra_hosts:
+      - "dockerhost:${DOCKER_HOST_IP}"
+    ports:
+      - ${WORKSPACE_SSH_PORT}:22
+    networks:
+      - backend
