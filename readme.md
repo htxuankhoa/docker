@@ -1,5 +1,6 @@
 # Overview
 
+## Application path
 This environment is setup to serve multi-projects at the `APPLICATIONS` path.
 
 Example
@@ -12,18 +13,20 @@ Example
 
 → set the `APPLICATIONS` path is `~/dev`
 
-All the MySQL data & Apache2 logs will be stored in the `./_synced` path.
+## Mapping data & log between HOST & GUEST machine
+
+All the MySQL data & Apache2 logs will be stored in the `<this_repo>/_synced` path by default.
 
 You can change those paths as your need by changing these variables below
 
 ```
-HOST_APACHE2_LOGS_PATH=./_synced/logs/apache2
-HOST_MYSQL_DATA_PATH=./_synced/data/mysql
+HOST_APACHE2_LOGS_PATH=path/to/HOST/logs/apache2
+HOST_MYSQL_DATA_PATH=path/to/HOST/data/mysql
 ```
 
 # Installation
 
-Please remember to modify the `.env` file before build containers.
+Please **remember** to modify variables in the `.env` file before build containers.
 
 ```bash
 $ cp .env.example .env
@@ -40,9 +43,11 @@ $ docker-compose up -d mysql php-fpm apache2 workspace
 #    --build: build images before starting containers.
 $ docker-compose up -d --build --force-recreate --no-deps <service_name>
 
+# SSH to the workspace container to perform commands
 $ docker exec -it workspace /bin/bash
 
-$ docker exec -i mysql mysql -uroot -psecret db_name < path/to/db_dumped.sql
+# Restore the dumped database to the MySQL container from HOST machine
+$ docker exec -i mysql mysql -uroot -psecret <db_name> < path/to/db_dumped.sql
 ```
 
 **References**
