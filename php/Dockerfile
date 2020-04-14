@@ -17,6 +17,8 @@ RUN pecl channel-update pecl.php.net \
   && docker-php-ext-enable mcrypt \
   && docker-php-ext-enable xdebug
 
+RUN docker-php-ext-install mysqli pdo pdo_mysql
+
 RUN curl -sS https://getcomposer.org/installer | php \
   && mv composer.phar /usr/local/bin/ \
   && ln -s /usr/local/bin/composer.phar /usr/local/bin/composer
