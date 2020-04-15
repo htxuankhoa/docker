@@ -1,11 +1,14 @@
 ARG PHP_VERSION
 FROM php:${PHP_VERSION}-fpm-alpine
 
-RUN apk add --update --no-cache curl-dev wget git grep g++ make zip unzip \
-  autoconf build-base icu-dev \
-  libmemcached-dev libmcrypt-dev libxml2-dev \
-  libtool libgsasl-dev libzip-dev \
-  imagemagick-dev pcre-dev cyrus-sasl-dev supervisor
+RUN apk add --update --no-cache curl-dev wget \
+  git grep g++ make zip unzip \
+  autoconf build-base icu-dev icu-libs \
+  freetype-dev libpng-dev libjpeg-turbo-dev libxslt-dev \
+  libmemcached-dev libmcrypt-dev libxml2-dev oniguruma-dev \
+  libtool libgsasl-dev libzip-dev libssl1.1 libxslt \
+  freetype libpng libjpeg-turbo imagemagick-dev \
+ openssl-dev pcre-dev cyrus-sasl-dev supervisor
 
 RUN pecl channel-update pecl.php.net \
   && pecl install memcached \
@@ -17,7 +20,13 @@ RUN pecl channel-update pecl.php.net \
   && docker-php-ext-enable mcrypt \
   && docker-php-ext-enable xdebug
 
-RUN docker-php-ext-install mysqli pdo pdo_mysql
+RUN docker-php-ext-install mysqli pdo pdo_mysql \
+  exif gd zip intl pcntl bcmath mbstring iconv xsl
+
+RUN docker-php-ext-install intl \
+  && docker-php-ext-configure intl
+
+RUN docker-php-ext-configure gd --with-jpeg --with-freetype
 
 RUN curl -sS https://getcomposer.org/installer | php \
   && mv composer.phar /usr/local/bin/ \
