@@ -3,7 +3,7 @@
 ![Local Docker screenshot](screenshot.png)
 
 ## Application path
-This environment is setup to serve multi-projects at the `APPLICATIONS` path.
+This environment is setting up to serve multi-projects at the `APPLICATIONS` path.
 
 Example
 
@@ -39,6 +39,22 @@ $ docker exec -it web /bin/bash
 
 # Restore the dumped database to the MySQL container from HOST machine
 $ docker exec -i db mysql -uroot -psecret <db_name> < path/to/db_dumped.sql
+
+# clean up the components if needed
+$ docker container prune
+$ docker image prune
+$ docker network prune
+$ docker volume prune
+
+# resolve the port was allocated error
+# Example error message: "Bind for 0.0.0.0:443 failed: port is already allocated"
+$ docker-compose down
+$ sudo lsof -i -P -n | grep 443
+$ kill -9 <process id>
+$ docker-compose up
+
+# find php.ini path
+$ php -info | grep 'php.ini'
 ```
 
 **References**

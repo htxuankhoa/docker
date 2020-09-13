@@ -12,7 +12,7 @@ services:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - TZ=${TIMEZONE}
     volumes:
-      - ./sync/data/mysql:/var/lib/mysql
+      - ${SYNC_MYSQL_DATA_PATH}:/var/lib/mysql
       - ./my.cnf:/etc/mysql/conf.d/my.cnf
     ports:
       - ${MYSQL_HOST_PORT}:3306
@@ -34,9 +34,10 @@ services:
     tty: true
     ports:
       - 80:80
+      - 443:443
     volumes:
       - ${APPLICATIONS}:/var/www
-      - ./sync/logs/apache2_error.log:/var/log/apache2/error.log
+      - ${SYNC_APACHE2_ERROR_LOG_PATH}:/var/log/apache2/error.log
       - ./vhosts/sites:/etc/apache2/sites-available
       - ./php/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
       - ./php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
