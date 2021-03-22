@@ -22,6 +22,9 @@ Please **remember** to modify variables in the `.env` file before build containe
 ```bash
 $ cp .env.example .env
 
+# Create log file on Host machine to sync with Apache2 container's log file
+$ touch sync/logs/apache2_error.log
+
 # Build images & containers
 $ docker-compose up -d web db
 ```
@@ -55,6 +58,10 @@ $ docker-compose up
 
 # find php.ini path
 $ php -info | grep 'php.ini'
+
+# Inspect network
+$ docker network ls
+$ docker network inspect <network_name>
 ```
 
 **References**

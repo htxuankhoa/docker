@@ -1,4 +1,8 @@
-version: '3'
+version: '3.5'
+
+networks:
+  dockernet:
+    driver: bridge
 
 services:
   db:
@@ -16,6 +20,8 @@ services:
       - ./my.cnf:/etc/mysql/conf.d/my.cnf
     ports:
       - ${MYSQL_HOST_PORT}:3306
+    networks:
+      - dockernet
 
   web:
     build:
@@ -27,8 +33,6 @@ services:
     image: htxuankhoa/web:latest
     container_name: web
     depends_on:
-      - db
-    links:
       - db
     restart: unless-stopped
     tty: true
@@ -44,3 +48,5 @@ services:
       - ./php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
     extra_hosts:
       - "dockerhost:${DOCKER_HOST_IP}"
+    networks:
+      - dockernet

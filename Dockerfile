@@ -1,4 +1,4 @@
-ARG PHP_VERSION=7.3
+ARG PHP_VERSION=7.4
 FROM php:${PHP_VERSION}-apache
 
 LABEL maintainer="Khoa Hoang"
@@ -6,15 +6,14 @@ LABEL maintainer="Khoa Hoang"
 RUN apt-get update && \
   apt-get upgrade -y && \
   apt-get install -yqq --no-install-recommends --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-  autoconf automake apt-utils build-essential curl git make vim gcc gettext net-tools wget zip unzip \
+  autoconf automake apt-utils iputils-ping build-essential curl git make vim gcc gettext net-tools wget zip unzip \
   libzip-dev libmagick++-dev zlib1g-dev libmagickwand-dev libpq-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev
 
 RUN docker-php-ext-install gd intl pdo_mysql pdo_pgsql mysqli zip
 RUN docker-php-ext-configure gd \
-  --with-png-dir=/usr/include/ \
-  --with-jpeg-dir=/usr/include/ \
-  --with-freetype-dir=/usr/include/
-RUN docker-php-ext-configure zip --with-libzip
+  --with-jpeg=/usr/include/ \
+  --with-freetype=/usr/include/
+RUN docker-php-ext-configure zip
 
 RUN pecl install imagick && docker-php-ext-enable imagick
 
