@@ -1,4 +1,4 @@
-ARG PHP_VERSION=7.4
+ARG PHP_VERSION=8.0
 FROM php:${PHP_VERSION}-apache
 
 LABEL maintainer="Khoa Hoang"
@@ -15,7 +15,12 @@ RUN docker-php-ext-configure gd \
   --with-freetype=/usr/include/
 RUN docker-php-ext-configure zip
 
-RUN pecl install imagick && docker-php-ext-enable imagick
+# At the time of writing, the `imagick` library is not officially released for PHP 8 yet ( https://pecl.php.net/package/imagick ).
+# This fix is just a workaround solution while waiting for their official release.
+# RUN docker-php-ext-install imagick && docker-php-ext-enable imagick
+RUN mkdir -p /usr/src/php/ext/imagick; \
+    curl -fsSL https://github.com/Imagick/imagick/archive/06116aa24b76edaf6b1693198f79e6c295eda8a9.tar.gz | tar xvz -C "/usr/src/php/ext/imagick" --strip 1; \
+    docker-php-ext-install imagick;
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
