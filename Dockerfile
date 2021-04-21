@@ -27,7 +27,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN curl -s -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
   chmod +x /usr/local/bin/wp
 
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - \
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
   && apt-get install -y nodejs \
   && curl -L https://www.npmjs.com/install.sh | sh \
   && npm install -g yarn
