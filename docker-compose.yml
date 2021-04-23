@@ -43,7 +43,7 @@ services:
       - ${APPLICATIONS}:/var/www
       - ${SYNC_APACHE2_ERROR_LOG_PATH}:/var/log/apache2/error.log
       - ./vhosts/sites:/etc/apache2/sites-available
-      - ./php/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
+      - ./php/php${PHP_INI_VERSION}.ini:/usr/local/etc/php/php.ini
       - ./php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
       - ./php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
     extra_hosts:
