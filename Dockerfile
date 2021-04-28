@@ -6,14 +6,18 @@ LABEL maintainer="Khoa Hoang"
 RUN apt-get update && \
   apt-get upgrade -y && \
   apt-get install -yqq --no-install-recommends --allow-downgrades --allow-remove-essential --allow-change-held-packages \
-  autoconf automake apt-utils iputils-ping build-essential curl git make vim gcc gettext net-tools wget zip unzip \
-  libzip-dev libmagick++-dev zlib1g-dev libmagickwand-dev libpq-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev
+  autoconf automake apt-utils iputils-ping build-essential curl git g++ make vim gcc gettext net-tools wget zip unzip \
+  libzip-dev libbz2-dev libmemcached-dev libyaml-dev libicu-dev libmagick++-dev libssl-dev zlib1g-dev libmagickwand-dev libpq-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev
 
-RUN docker-php-ext-install gd intl pdo_mysql pdo_pgsql mysqli zip
+RUN docker-php-ext-install bcmath bz2 exif gd gettext intl pcntl pdo_mysql pdo_pgsql mysqli zip
 RUN docker-php-ext-configure gd \
   --with-jpeg=/usr/include/ \
   --with-freetype=/usr/include/
 RUN docker-php-ext-configure zip
+
+RUN pecl install -o -f memcached mongodb redis yaml && \
+  rm -rf /tmp/pear && \
+  docker-php-ext-enable memcached mongodb redis yaml
 
 # At the time of writing, the `imagick` library is not officially released for PHP 8 yet ( https://pecl.php.net/package/imagick ).
 # This fix is just a workaround solution while waiting for their official release.
