@@ -30,7 +30,7 @@ services:
         - PHP_VERSION=${PHP_VERSION}
         - INSTALL_XDEBUG=${INSTALL_XDEBUG}
         - TIMEZONE=${TIMEZONE}
-    image: htxuankhoa/php${PHP_VERSION}:php${PHP_VERSION}
+    image: htxuankhoa/php:${PHP_VERSION}
     container_name: php${PHP_VERSION}
     depends_on:
       - db
