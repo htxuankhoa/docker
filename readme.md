@@ -1,37 +1,50 @@
 # Overview
 
-![Local Docker screenshot](screenshot.png)
-
-## Application path
-This environment is setting up to serve multi-projects at the `APPLICATIONS` path.
-
-Example
+On my local machine, I store all of my projects follow this convention.
+This convention help me locate all of my projects easier.
 
 ```
 ~/dev
 ├── project1
 └── project2
+└── ...
+└── projectN
 ```
 
-→ set the `APPLICATIONS` path is `~/dev`
+Then, below is the screenshot when I'm using Docker environment
+
+![Local Docker screenshot](screenshot.png)
 
 # Installation
 
-Please **remember** to modify variables in the `.env` file before build containers.
+Firstly, please copy the `.env.example` file
 
 ```bash
 $ cp .env.example .env
+```
 
-# Create log file on Host machine to sync with Apache2 container's log file
+Then, please **remember** to modify variables in the `.env` file before build containers.
+
+```bash
+# create log file on HOST machine to sync with Apache2's log file inside the CONTAINER
 $ touch sync/logs/apache2_error.log
 
-# Build images & containers
-$ docker-compose up -d web db
+# build images & containers
+$ docker-compose up -d web mysql postgresql
 ```
+
+Please note that because the `~/dev` is my root folder of all projects so the `APPLICATIONS` variable I set to `~/dev`.
+Please modify according to your environment.
 
 # Useful commands
 
 ```bash
+# Delete containers & images
+$ docker stop <container-name>
+$ docker rm <container-name>
+$ docker images
+$ docker rmi <image-id>
+
 # Re-build only a specific service
 #    --no-deps: don't start linked services.
 #    --build: build images before starting containers.
