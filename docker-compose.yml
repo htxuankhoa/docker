@@ -5,10 +5,10 @@ networks:
     driver: bridge
 
 services:
-  db:
+  mysql:
     image: mysql:${MYSQL_VERSION}
     container_name: mysql${MYSQL_VERSION}
-    restart: unless-stopped
+    restart: always
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
@@ -23,6 +23,22 @@ services:
     networks:
       - dockernet
 
+  postgresql:
+    image: postgres:${POSTGRESQL_VERSION}
+    container_name: postgresql${POSTGRESQL_VERSION}
+    restart: always
+    environment:
+      - PGDATA=/var/lib/postgresql/data
+      - POSTGRES_DB=${POSTGRESQL_DATABASE}
+      - POSTGRES_USER=${POSTGRESQL_USER}
+      - POSTGRES_PASSWORD=${POSTGRESQL_PASSWORD}
+    volumes:
+      - ${SYNC_POSTGRESQL_DATA_PATH}:/var/lib/postgresql/data:rw
+    ports:
+      - ${POSTGRESQL_HOST_PORT}:5432
+    networks:
+      - dockernet
+
   web:
     build:
       context: .
@@ -32,9 +48,10 @@ services:
         - TIMEZONE=${TIMEZONE}
     image: htxuankhoa/php:${PHP_VERSION}
     container_name: php${PHP_VERSION}
+    restart: always
     depends_on:
-      - db
-    restart: unless-stopped
+      - mysql
+      - postgresql
     tty: true
     ports:
       - 80:80
